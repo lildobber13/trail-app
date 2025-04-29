@@ -28,7 +28,10 @@ export default function Home() {
     e.preventDefault();
     if (!input.trim()) return;
   
-    const userMessage = { role: 'user', content: input };
+    const userMessage: { role: 'user'; content: string } = {
+      role: 'user',
+      content: input,
+    };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsTyping(true);
@@ -44,7 +47,10 @@ export default function Home() {
   
       const data = await res.json();
   
-      const aiMessage = { role: 'assistant', content: data.reply };
+      const aiMessage: { role: 'assistant'; content: string } = {
+        role: 'assistant',
+        content: data.reply,
+      };
       setMessages(prev => [...prev, aiMessage]);
     } catch (err) {
       console.error('Request failed:', err);
