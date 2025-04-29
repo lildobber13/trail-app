@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { supabase } from '../lib/supabaseClient';
 
 export default function Home() {
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
@@ -33,6 +34,9 @@ export default function Home() {
       content: input,
     };
     setMessages(prev => [...prev, userMessage]);
+    await supabase.from('messages').insert([
+      { role: 'user', content: input }
+    ]);    
     setInput('');
     setIsTyping(true);
   
@@ -52,6 +56,9 @@ export default function Home() {
         content: data.reply,
       };
       setMessages(prev => [...prev, aiMessage]);
+      await supabase.from('messages').insert([
+        { role: 'assistant', content: data.reply }
+      ]);      
     } catch (err) {
       console.error('Request failed:', err);
     } finally {
