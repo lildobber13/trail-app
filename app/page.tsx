@@ -7,11 +7,6 @@ import loadingAnimation from '../public/animations/loading-bar.json';
 
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
-export const metadata = {
-  title: 'trAIl Assistant',
-  description: 'Your personal AI conference guide.',
-};
-
 export default function Home() {
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
   const [input, setInput] = useState('');
