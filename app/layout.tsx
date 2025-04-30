@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "trAIl Conference Assistant"
-  description: "A helpful AI conference assistant for conferences."
+  title: "trAIl Conference Assistant",
+  description: "A conference assistant",
 };
 
 export default function RootLayout({
