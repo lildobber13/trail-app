@@ -1,3 +1,4 @@
+// Step 1: AI-powered extraction of favorite color, food, and place
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -44,20 +45,20 @@ export default function Home() {
     }
   }, [favorites]);
 
-  const checkForFavorites = (text: string) => {
-    const lower = text.toLowerCase();
-
-    if (!favorites.color && /(red|blue|green|yellow|purple|orange|pink|black|white|gray)/.test(lower)) {
-      const match = lower.match(/(red|blue|green|yellow|purple|orange|pink|black|white|gray)/);
-      if (match) setFavorites((prev) => ({ ...prev, color: match[0] }));
-    }
-    if (!favorites.food && /(pizza|burger|pasta|sushi|steak|chicken|tacos|ice cream|salad)/.test(lower)) {
-      const match = lower.match(/(pizza|burger|pasta|sushi|steak|chicken|tacos|ice cream|salad)/);
-      if (match) setFavorites((prev) => ({ ...prev, food: match[0] }));
-    }
-    if (!favorites.place && /(paris|hawaii|japan|italy|new york|london|beach|mountains)/.test(lower)) {
-      const match = lower.match(/(paris|hawaii|japan|italy|new york|london|beach|mountains)/);
-      if (match) setFavorites((prev) => ({ ...prev, place: match[0] }));
+  const extractFavoritesFromChat = async () => {
+    try {
+      const res = await fetch('/api/extract', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages }),
+      });
+      const data = await res.json();
+      const { color, food, place } = data;
+      if (color && !favorites.color) setFavorites((prev) => ({ ...prev, color }));
+      if (food && !favorites.food) setFavorites((prev) => ({ ...prev, food }));
+      if (place && !favorites.place) setFavorites((prev) => ({ ...prev, place }));
+    } catch (err) {
+      console.error('Extraction failed:', err);
     }
   };
 
@@ -70,7 +71,6 @@ export default function Home() {
       content: input,
     };
     setMessages((prev) => [...prev, userMessage]);
-    checkForFavorites(input);
     await supabase.from('messages').insert([{ role: 'user', content: input }]);
     setInput('');
     setIsTyping(true);
@@ -88,8 +88,9 @@ export default function Home() {
         content: data.reply,
       };
       setMessages((prev) => [...prev, aiMessage]);
-      checkForFavorites(data.reply);
       await supabase.from('messages').insert([{ role: 'assistant', content: data.reply }]);
+
+      await extractFavoritesFromChat();
     } catch (err) {
       console.error('Request failed:', err);
     } finally {
@@ -99,7 +100,6 @@ export default function Home() {
 
   return (
     <main className="h-screen bg-gray-900 text-white flex flex-col justify-between p-4 max-w-screen-md mx-auto">
-      {/* Lottie animation */}
       <div className="h-[100px] flex items-center justify-center shrink-0">
         <Lottie
           lottieRef={animationRef}
@@ -110,7 +110,6 @@ export default function Home() {
         />
       </div>
 
-      {/* Message thread */}
       <div className="flex-1 overflow-y-auto space-y-4 px-2 pr-2">
         {messages.map((msg, idx) => (
           <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -129,7 +128,6 @@ export default function Home() {
         <div ref={bottomRef} />
       </div>
 
-      {/* Input form */}
       <form onSubmit={handleSend} className="flex gap-1 mt-2 shrink-0">
         <input
           type="text"
@@ -143,7 +141,6 @@ export default function Home() {
         </button>
       </form>
 
-      {/* Success overlay */}
       {showSuccess && (
         <div className="fixed inset-0 bg-black bg-opacity-90 text-white flex flex-col items-center justify-center z-50">
           <h1 className="text-4xl font-bold mb-4">🎉 Mission Accomplished!</h1>
