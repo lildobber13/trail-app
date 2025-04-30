@@ -47,15 +47,15 @@ export default function Home() {
   const checkForFavorites = (text: string) => {
     const lower = text.toLowerCase();
 
-    if (!favorites.color && /(red|blue|green|yellow|purple|orange|pink|black|white|gray)/.test(lower)) {
+    if (!favorites.color && /\\b(red|blue|green|yellow|purple|orange|pink|black|white|gray)/.test(lower)) {
       const match = lower.match(/(red|blue|green|yellow|purple|orange|pink|black|white|gray)/);
       if (match) setFavorites((prev) => ({ ...prev, color: match[0] }));
     }
-    if (!favorites.food && /(pizza|burger|pasta|sushi|steak|chicken|tacos|ice cream|salad)/.test(lower)) {
+    if (!favorites.food && /\\b(pizza|burger|pasta|sushi|steak|chicken|tacos|ice cream|salad)/.test(lower)) {
       const match = lower.match(/(pizza|burger|pasta|sushi|steak|chicken|tacos|ice cream|salad)/);
       if (match) setFavorites((prev) => ({ ...prev, food: match[0] }));
     }
-    if (!favorites.place && /(paris|hawaii|japan|italy|new york|london|beach|mountains)/.test(lower)) {
+    if (!favorites.place && /\\b(paris|hawaii|japan|italy|new york|london|beach|mountains)/.test(lower)) {
       const match = lower.match(/(paris|hawaii|japan|italy|new york|london|beach|mountains)/);
       if (match) setFavorites((prev) => ({ ...prev, place: match[0] }));
     }
