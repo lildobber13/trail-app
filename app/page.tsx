@@ -1,10 +1,11 @@
-// Step 1: AI-powered extraction of favorite color, food, and place
+// Step 1: AI-powered extraction with confetti animation when complete
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { supabase } from '../lib/supabaseClient';
 import loadingAnimation from '../public/animations/loading-bar.json';
+import confetti from 'canvas-confetti';
 
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
@@ -42,6 +43,11 @@ export default function Home() {
     const { color, food, place } = favorites;
     if (color && food && place) {
       setShowSuccess(true);
+      confetti({
+        particleCount: 150,
+        spread: 80,
+        origin: { y: 0.6 },
+      });
     }
   }, [favorites]);
 
@@ -87,13 +93,13 @@ export default function Home() {
         role: 'assistant',
         content: data.reply,
       };
+
       setMessages((prev) => [...prev, aiMessage]);
       await supabase.from('messages').insert([{ role: 'assistant', content: data.reply }]);
-
-      await extractFavoritesFromChat();
+      setIsTyping(false);
+      extractFavoritesFromChat();
     } catch (err) {
       console.error('Request failed:', err);
-    } finally {
       setIsTyping(false);
     }
   };
