@@ -25,7 +25,7 @@ You're a helpful AI. From the following chat history, extract the user's favorit
 }
 
 If any are not mentioned, return null for those.
-            `.trim(),
+          `.trim(),
           },
           {
             role: 'user',
